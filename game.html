@@ -61,7 +61,7 @@
             /*
              * Fecuencia incidentes
              */
-            this.interval = 11;  // seconds
+            this.interval = 8;  // seconds
 
             /*
              * Probabilidad Performer
@@ -194,11 +194,15 @@
             /*
              * The night begins
              */
-            var thisScene = this;
             this.game.time.events.add(Phaser.Timer.SECOND * this.secToBegin, function() {
-                thisScene.toNight();
-                thisScene.proceeding();
-            });
+                this.toNight();
+                this.proceeding();
+            }, this);
+
+            /*
+             * Ganador si aguanta 10 minutos
+             */
+            this.game.time.events.add(Phaser.Timer.MINUTE * 10, this.win, this);
         }
 
         KokoScene.prototype.toggleNight = function() {
@@ -396,6 +400,29 @@
                     }
                 }, this);
             }, this);
+        }
+
+        KokoScene.prototype.win = function(performer) {
+            this.tv.turnOff();
+            if (this.cat) {
+                this.catSnd.stop();
+            }
+
+            this.winSnd = this.game.add.audio('win-snd');
+            this.winImg = this.game.add.sprite(939, 60,  'win-img');
+
+                this.game.camera.y = 60;
+                this.game.camera.x = 939;
+
+            this.game.world.bringToTop(this.winImg);
+
+            this.winSnd.loop = false;
+            this.winSnd.play();
+
+            this.game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+                window.location.href = window.location.href;
+            }, this);
+
         }
 
         KokoScene.prototype.dead = function(performer) {
@@ -714,9 +741,11 @@
             game.load.image('control-btn', 'media/control-btn.png');
             game.load.image('controls', 'media/controls.png');
             game.load.image('full-btn', 'media/full-btn.png');
+            game.load.image('win-img', 'media/6.png');
+            game.load.audio('win-snd', 'media/win.mp3');
             game.load.video('scare-koko', 'media/scare-koko.mp4');
-            game.load.video('scare-cate', 'media/scare-koko.mp4');
-            game.load.video('scare-cute', 'media/scare-koko.mp4');
+            game.load.video('scare-cate', 'media/scare-cate.mp4');
+            game.load.video('scare-cute', 'media/scare-cute.mp4');
 
             /*
              * Door
