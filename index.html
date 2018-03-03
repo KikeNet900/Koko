@@ -7,9 +7,10 @@
 </head>
 <body style="color: #fff; background-color: #000" onload="">
 
-
-    <div id="koko-container" style="width: 980px; height: 600px; margin: auto;">
+    <div id="koko-container" style="width: 960px; height: 600px; margin: auto;">
         <div id="koko-main"></div>
+    </div>
+    <div style="width: 100%; margin: auto; text-align: center;">
         Cierra las puertas y no hagas ruido. F11 pantalla completa.
     </div>
 
@@ -104,7 +105,7 @@
             /*
              * movement speed
              */
-            this.moveSpeed = 20;
+            this.moveSpeed = 18;
 
             this.cursors = game.input.keyboard.createCursorKeys();
             this.game.sound.stopAll();
@@ -161,7 +162,7 @@
 
             this.ctrlFull = this.game.add.button(80, 495, 'full-btn', function(){
                 this.game.camera.y = 60;
-                this.game.camera.x = 900;
+                this.game.camera.x = 939;
             }, this);
             this.ctrlFull.fixedToCamera = true;
 
@@ -444,10 +445,8 @@
         }
 
         KokoScene.prototype.update = function() {
-
-            this.game.world.bringToTop(this.controls);
-
             if (!this.isDead) {
+                this.game.world.bringToTop(this.controls);
                 if (this.goUp) {
                     this.game.camera.y -= this.moveSpeed;
                 }
@@ -461,7 +460,6 @@
                     this.game.camera.x += this.moveSpeed;
                 }
             }
-
 //             if (!this.isDead) {
 //                 if (this.cursors.up.isDown || game.input.mousePointer.y < this.areaU) {
 //                     game.camera.y -= this.moveSpeed;
@@ -701,7 +699,7 @@
         /*
          * Camera size
          */
-        var cameraWidth  = 980;
+        var cameraWidth  = 960;
         var cameraHeight = 600;
 
         var game  = new Phaser.Game(cameraWidth, cameraHeight, Phaser.CANVAS, divContainer, { preload: preload, create: create, update: update, render: render });
@@ -780,7 +778,7 @@
             var worldHeight = 768;
             game.world.setBounds(0, 0, worldWidth, worldHeight);
             game.camera.y = 60;
-            game.camera.x = 900;
+            game.camera.x = 939;
 
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
