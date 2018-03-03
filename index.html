@@ -60,17 +60,17 @@
             /*
              * Fecuencia incidentes
              */
-            this.interval = 12;  // seconds
+            this.interval = 11;  // seconds
 
             /*
              * Probabilidad Performer
              */
-            this.probabilityPerformer = 15; // percent
+            this.probabilityPerformer = 10; // percent
 
             /*
              * Tiempo para cerrar puerta o acción para salvarse
              */
-            this.performerTime = 9;  // seconds
+            this.performerTime = 10;  // seconds
 
             /*
              * Tiempo para el gato llame a un performer
@@ -80,7 +80,7 @@
             /*
              * Probabilidad gato
              */
-            this.probabilityCat = 45;  // seconds
+            this.probabilityCat = 35;  // percent
 
             /*
              * Tiempo para el teléfono llame a un performer
@@ -90,7 +90,7 @@
             /*
              * Probabilidad phone
              */
-            this.probabilityPhone = 30;  // seconds
+            this.probabilityPhone = 25;  // percent
 
             /*
              * Tiempo para el reproductor llame a un performer
@@ -99,12 +99,12 @@
             /*
              * Probabilidad reproductor de musica
              */
-            this.probabilityMusic = 20;  // seconds
+            this.probabilityMusic = 15;  // percent
 
             /*
              * movement speed
              */
-            this.moveSpeed = 12;
+            this.moveSpeed = 20;
 
             this.cursors = game.input.keyboard.createCursorKeys();
             this.game.sound.stopAll();
@@ -448,16 +448,16 @@
             this.game.world.bringToTop(this.controls);
 
             if (!this.isDead) {
-                if (this.goUp || this.cursors.up.isDown || game.input.mousePointer.y < this.areaU) {
+                if (this.goUp || game.input.mousePointer.y < this.areaU) {
                     this.game.camera.y -= this.moveSpeed;
                 }
-                if (this.goDown || this.cursors.down.isDown || game.input.mousePointer.y > this.areaD) {
+                if (this.goDown || game.input.mousePointer.y > this.areaD) {
                     this.game.camera.y += this.moveSpeed;
                 }
-                if (this.goLeft || this.cursors.left.isDown || game.input.mousePointer.x < this.areaL) {
+                if (this.goLeft || game.input.mousePointer.x < this.areaL) {
                     this.game.camera.x -= this.moveSpeed;
                 }
-                if (this.goRight || this.cursors.right.isDown || game.input.mousePointer.x > this.areaR) {
+                if (this.goRight || game.input.mousePointer.x > this.areaR) {
                     this.game.camera.x += this.moveSpeed;
                 }
             }
