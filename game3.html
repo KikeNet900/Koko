@@ -445,16 +445,16 @@
             this.game.world.bringToTop(this.controls);
 
             if (!this.isDead) {
-                if (this.goUp || this.cursors.up.isDown ) {
+                if (this.goUp ||  game.input.mousePointer.y < this.areaU) {
                     this.game.camera.y -= this.moveSpeed;
                 }
-                if (this.goDown || this.cursors.down.isDown ) {
+                if (this.goDown ||  game.input.mousePointer.y > this.areaD) {
                     this.game.camera.y += this.moveSpeed;
                 }
-                if (this.goLeft || this.cursors.left.isDown ) {
+                if (this.goLeft ||  game.input.mousePointer.x < this.areaL) {
                     this.game.camera.x -= this.moveSpeed;
                 }
-                if (this.goRight || this.cursors.right.isDown ) {
+                if (this.goRight ||  game.input.mousePointer.x > this.areaR) {
                     this.game.camera.x += this.moveSpeed;
                 }
             }
