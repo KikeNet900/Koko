@@ -448,16 +448,16 @@
             this.game.world.bringToTop(this.controls);
 
             if (!this.isDead) {
-                if (this.goUp || game.input.mousePointer.y < this.areaU) {
+                if (this.goUp) {
                     this.game.camera.y -= this.moveSpeed;
                 }
-                if (this.goDown || game.input.mousePointer.y > this.areaD) {
+                if (this.goDown) {
                     this.game.camera.y += this.moveSpeed;
                 }
-                if (this.goLeft || game.input.mousePointer.x < this.areaL) {
+                if (this.goLeft) {
                     this.game.camera.x -= this.moveSpeed;
                 }
-                if (this.goRight || game.input.mousePointer.x > this.areaR) {
+                if (this.goRight) {
                     this.game.camera.x += this.moveSpeed;
                 }
             }
