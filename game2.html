@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Una noche con Koko</title>
+    <meta charset="utf-8">
+    <script src="phaser.min.js"></script>
+</head>
+<body style="color: #fff; background-color: #000" onload="">
+
+
+    <div id="koko-container" style="width: 1024px; height: 600px; margin: auto;">
+        <div id="koko-main"></div>
+        Cierra las puertas y no hagas ruido. F11 pantalla completa.
+    </div>
+
+
+
+    <script>
+
+    /*
+     * The MIT License (MIT)
+     *
+     * Copyright (c) 2018 KikeNet900 y Padre de Kike
+     * https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ
+     *
+     * Permission is hereby granted, free of charge, to any person obtaining a copy
+     * of this software and associated documentation files (the "Software"), to deal
+     * in the Software without restriction, including without limitation the rights
+     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+     * of the Software, and to permit persons to whom the Software is furnished to do
+     * so, subject to the following conditions:
+     *
+     * The above copyright notice and this permission notice shall be included in all
+     * copies or substantial portions of the Software.
+     *
+     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+     * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+     * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+     * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+     * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+     * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+     */
+
+
+
+        /*
+         * Scene
+         */
+        KokoScene = function(game, secToBegin) {
+            this.game = game;
+
+            /*
+             * Tiempo hasta que se hace de noche
+             */
+            this.secToBegin = secToBegin || 15; // seconds
+        }
+
+        KokoScene.prototype.create = function() {
+
+            /*
+             * Fecuencia incidentes
+             */
+            this.interval = 12;  // seconds
+
+            /*
+             * Probabilidad Performer
+             */
+            this.probabilityPerformer = 15; // percent
+
+            /*
+             * Tiempo para cerrar puerta o acción para salvarse
+             */
+            this.performerTime = 9;  // seconds
+
+            /*
+             * Tiempo para el gato llame a un performer
+             */
+            this.catTime = 7;  // seconds
+
+            /*
+             * Probabilidad gato
+             */
+            this.probabilityCat = 45;  // seconds
+
+            /*
+             * Tiempo para el teléfono llame a un performer
+             */
+            this.phoneTime = 7;  // seconds
+
+            /*
+             * Probabilidad phone
+             */
+            this.probabilityPhone = 30;  // seconds
+
+            /*
+             * Tiempo para el reproductor llame a un performer
+             */
+            this.musicTime = 7;  // seconds
+            /*
+             * Probabilidad reproductor de musica
+             */
+            this.probabilityMusic = 20;  // seconds
+
+            /*
+             * movement speed
+             */
+            this.moveSpeed = 20;
+
+            this.cursors = game.input.keyboard.createCursorKeys();
+            this.game.sound.stopAll();
+            this.game.time.events.removeAll();
+
+            /*
+             * movement area
+             */
+            this.moveArea = 25;
+            this.areaU = this.moveArea;
+            this.areaD = this.game.camera.height - this.moveArea;
+            this.areaL = this.moveArea;
+            this.areaR = this.game.camera.width - this.moveArea;
+
+            this.isDead  = false;
+            this.freeDoors      = ["1", "2"];
+            this.freePerformers = ["cute", "cate", "koko"];
+            this.game.add.sprite(0, 0, 'backdrop');
+
+            this.controls = this.game.add.sprite(25, 442, 'controls');
+            this.controls.fixedToCamera = true;
+
+            this.goUp = false;
+            this.ctrlUp = this.game.add.button(70, 441, 'control-btn');
+            this.ctrlUp.fixedToCamera = true;
+//             this.ctrlUp.events.onInputOver.add(function(){this.goUp=true;}, this);
+            this.ctrlUp.events.onInputOut.add(function(){this.goUp=false;}, this);
+            this.ctrlUp.events.onInputDown.add(function(){this.goUp=true;}, this);
+            this.ctrlUp.events.onInputUp.add(function(){this.goUp=false;}, this);
+
+            this.goRight = false;
+            this.ctrlRight = this.game.add.button(117, 486, 'control-btn');
+            this.ctrlRight.fixedToCamera = true;
+//             this.ctrlRight.events.onInputOver.add(function(){this.goRight=true;}, this);
+            this.ctrlRight.events.onInputOut.add(function(){this.goRight=false;}, this);
+            this.ctrlRight.events.onInputDown.add(function(){this.goRight=true;}, this);
+            this.ctrlRight.events.onInputUp.add(function(){this.goRight=false;}, this);
+
+            this.goLeft = false;
+            this.ctrlLeft = this.game.add.button(23, 486, 'control-btn');
+            this.ctrlLeft.fixedToCamera = true;
+//             this.ctrlLeft.events.onInputOver.add(function(){this.goLeft=true;}, this);
+            this.ctrlLeft.events.onInputOut.add(function(){this.goLeft=false;}, this);
+            this.ctrlLeft.events.onInputDown.add(function(){this.goLeft=true;}, this);
+            this.ctrlLeft.events.onInputUp.add(function(){this.goLeft=false;}, this);
+
+            this.goDown = false;
+            this.ctrlDown = this.game.add.button(70, 532, 'control-btn');
+            this.ctrlDown.fixedToCamera = true;
+//             this.ctrlDown.events.onInputOver.add(function(){this.goDown=true;}, this);
+            this.ctrlDown.events.onInputOut.add(function(){this.goDown=false;}, this);
+            this.ctrlDown.events.onInputDown.add(function(){this.goDown=true;}, this);
+            this.ctrlDown.events.onInputUp.add(function(){this.goDown=false;}, this);
+
+            this.ctrlFull = this.game.add.button(80, 495, 'full-btn', gofull, this);
+            this.ctrlFull.fixedToCamera = true;
+
+            this.stepsSnd = [];
+            this.stepsSnd[1] = this.game.add.audio('steps');
+            this.stepsSnd[2] = this.game.add.audio('steps');
+            this.scare = [];
+            this.scare['koko'] = game.add.video('scare-koko');
+            this.scare['cate'] = game.add.video('scare-cate');
+            this.scare['cute'] = game.add.video('scare-cute');
+            this.cat    = false;
+
+            this.door      = {
+                1 : new KokoDoorLeft(this),
+                2 : new KokoDoorRight(this)
+            };
+            this.tv        = new KokoTv(this);
+//             this.clock     = new KokoClock(this);
+//             this.phone     = new KokoPhone(this);
+
+            /*
+             * Default day
+             */
+            this.night = this.game.add.sprite(0, 0, 'night');
+            this.isNight = false;
+            this.night.visible = false;
+            this.toDay();
+
+            /*
+             * The night begins
+             */
+            var thisScene = this;
+            this.game.time.events.add(Phaser.Timer.SECOND * this.secToBegin, function() {
+                thisScene.toNight();
+                thisScene.proceeding();
+            });
+        }
+
+        KokoScene.prototype.toggleNight = function() {
+            if (this.isNight) {
+                this.isNight = false;
+                this.night.visible = false;
+                this.tv.turnOff();
+            } else {
+                this.isNight = true;
+                this.night.visible = true;
+                this.tv.turnOn();
+            }
+        }
+
+        KokoScene.prototype.toNight = function() {
+            if (!this.isNight) {
+                this.toggleNight();
+            }
+        }
+
+        KokoScene.prototype.toDay = function() {
+            if (this.isNight) {
+                this.toggleNight();
+            }
+        }
+
+        KokoScene.prototype.proceeding = function() {
+            this.game.time.events.loop(Phaser.Timer.SECOND * this.interval, function() {
+                this.incident();
+             }, this);
+        }
+
+        KokoScene.prototype.incident = function() {
+            if (Math.floor(Math.random() * 100) < this.probabilityPerformer) {
+                this.emergePerformer();
+            }
+            if (Math.floor(Math.random() * 100) < this.probabilityPerformer) {
+                this.emergePerformer();
+            }
+            if (Math.floor(Math.random() * 100) < this.probabilityCat) {
+                this.emergeCat();
+            }
+            if (Math.floor(Math.random() * 100) < this.probabilityPhone) {
+                this.emergePhone();
+            }
+            if (Math.floor(Math.random() * 100) < this.probabilityMusic) {
+                this.emergeMusic();
+            }
+        }
+
+        KokoScene.prototype.emergePhone = function() {
+            if (!this.phone) {
+                this.phoneSnd = this.game.add.audio('ring');
+                this.phone = this.game.add.button(767, 369, 'phone-btn', this.phoneRing, this);
+            } else {
+                this.phone.destroy();
+                this.phone = this.game.add.button(767, 369, 'phone-btn', this.phoneRing, this);
+            }
+            this.phone.inputEnabled = true;
+
+            if (!this.phoneSnd.isPlaying) {
+                this.phoneSnd.loop = true;
+                this.phoneSnd.play();
+                this.badPhone = this.game.time.events.loop(Phaser.Timer.SECOND * this.phoneTime, function() {
+                    /*
+                     * Cada vez menos tiempo para cerrar la puerta
+                     * teléfono malo!
+                     */
+                    this.performerTime--;
+                    if (this.performerTime < 4) {
+                        this.performerTime = 4;
+                    }
+                    this.emergePerformer();
+                }, this);
+            }
+        }
+
+        KokoScene.prototype.phoneRing = function() {
+            this.game.time.events.remove(this.badPhone);
+            this.phoneSnd.loop = false;
+            this.phoneSnd.stop();
+            this.phone.inputEnabled = false;
+        }
+
+        KokoScene.prototype.emergeMusic = function() {
+            if (!this.music) {
+                this.musicSnd = this.game.add.audio('music');
+                this.music = this.game.add.button(1868, 269, 'music-btn', this.musicPlay, this);
+            } else {
+                this.music.destroy();
+                this.music = this.game.add.button(1868, 269, 'music-btn', this.musicPlay, this);
+            }
+            this.music.inputEnabled = true;
+
+            if (!this.musicSnd.isPlaying) {
+                this.musicSnd.loop = true;
+                this.musicSnd.play();
+                this.badMusic = this.game.time.events.loop(Phaser.Timer.SECOND * this.musicTime, function() {
+                    /*
+                     * Cada vez menos tiempo para cerrar la puerta
+                     * teléfono malo!
+                     */
+                    this.performerTime--;
+                    if (this.performerTime < 4) {
+                        this.performerTime = 4;
+                    }
+                    this.emergePerformer();
+                }, this);
+            }
+        }
+
+        KokoScene.prototype.musicPlay = function() {
+            this.game.time.events.remove(this.badMusic);
+            this.musicSnd.loop = false;
+            this.musicSnd.stop();
+            this.music.inputEnabled = false;
+        }
+
+        KokoScene.prototype.emergeCat = function() {
+            var poss = {
+                0 : [1833 + Math.floor(Math.random() * 150), -30],
+                1 : [1649, 359],
+                2 : [1050, 359],
+                3 : [555,  283],
+                4 : [610,  384],
+                5 : [2167, 475],
+                6 : [400,  480],
+                7 : [300  + Math.floor(Math.random() * 250), 500 + Math.floor(Math.random() * 110)],
+                8 : [1355 + Math.floor(Math.random() * 250), 500 + Math.floor(Math.random() * 110)],
+                9 : [1800 + Math.floor(Math.random() * 250), 500 + Math.floor(Math.random() * 110)],
+               10 : [300  + Math.floor(Math.random() * 250), 500 + Math.floor(Math.random() * 110)],
+               11 : [1355 + Math.floor(Math.random() * 250), 500 + Math.floor(Math.random() * 110)],
+               12 : [1800 + Math.floor(Math.random() * 250), 500 + Math.floor(Math.random() * 110)],
+               13 : [1833 + Math.floor(Math.random() * 150), -30],
+               14 : [1833 + Math.floor(Math.random() * 150), -30]
+            };
+            var pos  = Math.floor(Math.random() * 15);
+            var posX = poss[pos][0];
+            var posY = poss[pos][1];
+            var cats = ['cat-1', 'cat-2', 'cat-3', 'cat-4'];
+            var cat  = cats[Math.floor(Math.random() * 4)];
+
+            if (!this.cat) {
+                this.catSnd = this.game.add.audio('meow');
+                this.cat = this.game.add.button(posX, posY, cat, this.catMeow, this);
+            } else {
+                this.cat.destroy();
+                this.cat = this.game.add.button(posX, posY, cat, this.catMeow, this);
+            }
+            this.cat.inputEnabled = true;
+
+            if (!this.catSnd.isPlaying) {
+                this.catSnd.loop = true;
+                this.catSnd.play();
+                this.badCat = this.game.time.events.loop(Phaser.Timer.SECOND * this.catTime, function() {
+                    /*
+                     * Cada vez menos tiempo para cerrar la puerta
+                     * gato malo!
+                     */
+                    this.performerTime--;
+                    if (this.performerTime < 4) {
+                        this.performerTime = 4;
+                    }
+                    this.emergePerformer();
+                }, this);
+            }
+        }
+
+        KokoScene.prototype.catMeow = function() {
+            this.game.time.events.remove(this.badCat);
+            this.catSnd.loop = false;
+            this.catSnd.stop();
+            this.cat.inputEnabled = false;
+        }
+
+        KokoScene.prototype.emergePerformer = function() {
+            var door = this.getFreeDoor();
+            if (!door) {
+                return false;
+            }
+
+            var performer = this.getFreePerformer();
+            if (!performer) {
+                return false;
+            }
+
+            this.stepsSnd[door].play();
+            this.stepsSnd[door].onStop.add(function() {
+                this.tv.setCam(door, performer);
+                this.door[door].open();
+                this.game.time.events.add(Phaser.Timer.SECOND * this.performerTime, function() {
+                    var performerInCam = this.tv.getCam(door);
+                    if (this.door[door].getOpen() && performer == performerInCam) {
+                        this.dead(performer);
+                    }
+                }, this);
+            }, this);
+        }
+
+        KokoScene.prototype.dead = function(performer) {
+            if (this.isDead) {
+                return;
+            }
+            this.isDead = true;
+            this.tv.turnOff();
+            if (this.cat) {
+                this.catSnd.stop();
+            }
+            this.game.world.bringToTop(
+                this.scare[performer].addToWorld(this.game.camera.x, this.game.camera.y)
+            );
+            this.scare[performer].play(false);
+            this.scare[performer].onComplete.add(function() {
+                window.location.href = window.location.href;
+//                 this.game.time.events.removeAll();
+//                 this.game.state.restart();
+            }, this);
+        }
+
+        KokoScene.prototype.closeDoorActions = function(door) {
+            var performer = this.tv.resetCamPerformer(door);
+            if (performer) {
+                this.freePerformers.push(performer.toString());
+                this.freeDoors.push(door.toString());
+            }
+        }
+
+        KokoScene.prototype.getFreeDoor = function() {
+            if (!this.freeDoors.length) {
+                return false;
+            }
+            var door = Math.floor(Math.random() * this.freeDoors.length);
+
+            return this.freeDoors.splice(door, 1);
+        }
+
+        KokoScene.prototype.getFreePerformer = function() {
+            if (!this.freePerformers.length) {
+                return false;
+            }
+            var performer = Math.floor(Math.random() * this.freePerformers.length);
+
+            return this.freePerformers.splice(performer, 1);
+        }
+
+        KokoScene.prototype.update = function() {
+
+            this.game.world.bringToTop(this.controls);
+
+            if (!this.isDead) {
+                if (this.goUp || this.cursors.up.isDown || game.input.mousePointer.y < this.areaU) {
+                    this.game.camera.y -= this.moveSpeed;
+                }
+                if (this.goDown || this.cursors.down.isDown || game.input.mousePointer.y > this.areaD) {
+                    this.game.camera.y += this.moveSpeed;
+                }
+                if (this.goLeft || this.cursors.left.isDown || game.input.mousePointer.x < this.areaL) {
+                    this.game.camera.x -= this.moveSpeed;
+                }
+                if (this.goRight || this.cursors.right.isDown || game.input.mousePointer.x > this.areaR) {
+                    this.game.camera.x += this.moveSpeed;
+                }
+            }
+
+//             if (!this.isDead) {
+//                 if (this.cursors.up.isDown || game.input.mousePointer.y < this.areaU) {
+//                     game.camera.y -= this.moveSpeed;
+//                 } else if (this.cursors.down.isDown || game.input.mousePointer.y > this.areaD) {
+//                     game.camera.y += this.moveSpeed;
+//                 }
+//
+//                 if (this.cursors.left.isDown || game.input.mousePointer.x < this.areaL) {
+//                     game.camera.x -= this.moveSpeed;
+//                 } else if (this.cursors.right.isDown || game.input.mousePointer.x > this.areaR) {
+//                     game.camera.x += this.moveSpeed;
+//                 }
+//             }
+        }
+
+        /*
+         * Door
+         */
+        KokoDoor = function(scene) {
+            this.scene  = scene;
+        }
+
+        KokoDoor.prototype.toggle = function() {
+            if (this.isOpen) {
+                this.isOpen = false;
+                this.closeBtn.visible = false;
+                this.closeSnd.play();
+                this.scene.game.time.events.add(100, function() {
+                    this.closeImg.visible = true;
+                    this.openImg.visible = false;
+                    this.openBtn.visible = true;
+                }, this);
+            } else {
+                this.isOpen = true;
+                this.openBtn.visible = false;
+                this.openSnd.play();
+                 this.scene.game.time.events.add(400, function() {
+                    this.closeImg.visible = false;
+                    this.openImg.visible = true;
+                    this.closeBtn.visible = true;
+                }, this);
+            }
+        }
+
+        KokoDoor.prototype.getOpen = function() {
+            return this.isOpen;
+        }
+
+        /*
+         * Door left
+         */
+        KokoDoorLeft = function(scene) {
+            KokoDoor.call(this, scene);
+            this.closeImg = this.scene.game.add.sprite(102, 74,  'door-close-l');
+            this.openImg  = this.scene.game.add.sprite(45, 31,   'door-open-l');
+            this.openBtn  = this.scene.game.add.button(242, 310, 'door-btn', this.toggle, this, 2, 1, 0);
+            this.closeBtn = this.scene.game.add.button(45, 320,  'door-btn', this.toggle, this, 2, 1, 0);
+            this.openSnd  = this.scene.game.add.audio('door-open-snd');
+            this.closeSnd = this.scene.game.add.audio('door-close-snd');
+
+            /*
+             * Default is open
+             */
+            this.isOpen = true;
+            this.closeImg.visible = false;
+            this.openBtn.visible  = false;
+        }
+        KokoDoorLeft.prototype = new KokoDoor;
+
+        KokoDoorLeft.prototype.toggle = function() {
+            if (this.isOpen) {
+                this.scene.closeDoorActions(1);
+            }
+
+            KokoDoor.prototype.toggle.call(this);
+        }
+
+        KokoDoorLeft.prototype.open = function() {
+            if (!this.isOpen) {
+                this.toggle();
+            }
+        }
+
+        KokoDoorLeft.prototype.close = function() {
+            if (this.isOpen) {
+                this.toggle();
+            }
+        }
+
+        /*
+         * Door ringt
+         */
+        KokoDoorRight = function(scene) {
+            KokoDoor.call(this, scene);
+            this.closeImg = this.scene.game.add.sprite(2358, 76, 'door-close-r');
+            this.openImg  = this.scene.game.add.sprite(2542, 31, 'door-open-r');
+            this.openBtn  = this.scene.game.add.button(2358, 310, 'door-btn', this.toggle, this, 2, 1, 0);
+            this.closeBtn = this.scene.game.add.button(2552, 320,  'door-btn', this.toggle, this, 2, 1, 0);
+            this.openSnd  = this.scene.game.add.audio('door-open-snd');
+            this.closeSnd = this.scene.game.add.audio('door-close-snd');
+
+            /*
+             * Default is open
+             */
+            this.isOpen = true;
+            this.closeImg.visible = false;
+            this.openBtn.visible  = false;
+        }
+        KokoDoorRight.prototype = new KokoDoor;
+
+        KokoDoorRight.prototype.toggle = function() {
+            if (this.isOpen) {
+                this.scene.closeDoorActions(2);
+            }
+
+            KokoDoor.prototype.toggle.call(this);
+        }
+
+        KokoDoorRight.prototype.open = function() {
+            if (!this.isOpen) {
+                this.toggle();
+            }
+        }
+
+        KokoDoorRight.prototype.close = function() {
+            if (this.isOpen) {
+                this.toggle();
+            }
+        }
+
+        /*
+         * TV
+         */
+        KokoTv = function(scene) {
+            this.scene      = scene;
+            this.scrn       = {};
+            this.x          = 1286;
+            this.y          = 176,
+            this.camBtn     = this.scene.game.add.button(this.x, this.y, 'cam-btn', this.toggleCam, this, 2, 1, 0);
+            this.current    = [];
+            this.current[1] = 'none';
+            this.current[2] = 'none';
+            this.activeCam  = 0;
+            this.textStyle  = { font: "bold 18px Arial", fill: "#fff" };
+
+            this.scrn = {
+                on  : {
+                    video : this.scene.game.add.video('tv-on'),
+                },
+                none  : {
+                    video : this.scene.game.add.video('tv-none')
+                },
+                cute  : {
+                    video : this.scene.game.add.video('tv-cute')
+                },
+                cate  : {
+                    video : this.scene.game.add.video('tv-cate')
+                },
+                koko  : {
+                    video : this.scene.game.add.video('tv-koko')
+                }
+
+            };
+
+            this.scrn['on']['image']   = this.scrn['on']['video'].addToWorld(this.x, this.y);
+            this.scrn['none']['image'] = this.scrn['none']['video'].addToWorld(this.x, this.y);
+            this.scrn['cute']['image'] = this.scrn['cute']['video'].addToWorld(this.x, this.y);
+            this.scrn['cate']['image'] = this.scrn['cate']['video'].addToWorld(this.x, this.y);
+            this.scrn['koko']['image'] = this.scrn['koko']['video'].addToWorld(this.x, this.y);
+
+            this.turnOff();
+        }
+
+        KokoTv.prototype.turnOn = function() {
+            this.activeCam = 0;
+            this.camBtn.visible = true;
+            this.scene.game.world.bringToTop(this.scrn['on']['image']);
+            this.scrn['on']['video'].play(true);
+        }
+
+        KokoTv.prototype.turnOff = function() {
+            this.activeCam = 0;
+            this.camBtn.visible = false;
+            this.scrn['on']['video'].stop();
+            this.scene.game.world.bringToTop(this.scrn['on']['image']);
+        }
+
+        KokoTv.prototype.playCam = function(cam) {
+            this.activeCam = cam;
+            this.scene.game.world.bringToTop(this.scrn[this.current[cam]]['image']);
+            this.scene.game.add.text(this.x, this.y, " CAM " + cam, this.textStyle);
+            this.scrn[this.current[cam]]['video'].play(false);
+            this.camComplete[cam] = this.scrn[this.current[cam]]['video'].onComplete.add(function() {
+                this.scene.game.world.bringToTop(this.scrn['on']['image']);
+            }, this);
+        }
+
+        KokoTv.prototype.getCam = function(cam) {
+            return this.current[cam];
+        }
+
+        KokoTv.prototype.setCam = function(cam, performer) {
+            this.current[cam] = performer;
+            this.turnOn();
+        }
+
+        KokoTv.prototype.resetCam = function(cam) {
+            this.current[cam] = 'none';
+            this.turnOn();
+        }
+
+        KokoTv.prototype.toggleCam = function() {
+            if (this.activeCam == 2 || !this.activeCam) {
+                this.playCam(1);
+            } else {
+                this.playCam(2);
+            }
+        }
+
+        KokoTv.prototype.resetCamPerformer = function(cam) {
+            var performer = false;
+            if (this.current[cam] != 'none') {
+                performer = this.current[cam];
+                this.resetCam(cam);
+            }
+
+            return performer;
+        }
+
+    </script>
+    <script>
+        /*
+         * DIV container
+         */
+        var divContainer = "koko-main";
+
+        /*
+         * Camera size
+         */
+        var cameraWidth  = 1024;
+        var cameraHeight = 600;
+
+        var game  = new Phaser.Game(cameraWidth, cameraHeight, Phaser.CANVAS, divContainer, { preload: preload, create: create, update: update, render: render });
+        var scene = new KokoScene(game);
+
+        function preload() {
+            /*
+             * Scene
+             */
+            game.load.image('backdrop', 'media/scene.png');
+            game.load.image('night', 'media/night.png');
+            game.load.image('control-btn', 'media/control-btn.png');
+            game.load.image('controls', 'media/controls.png');
+            game.load.image('full-btn', 'media/full-btn.png');
+            game.load.video('scare-koko', 'media/scare-koko.mp4');
+            game.load.video('scare-cate', 'media/scare-koko.mp4');
+            game.load.video('scare-cute', 'media/scare-koko.mp4');
+
+            /*
+             * Door
+             */
+            game.load.image('door-btn', 'media/door-btn.png');
+            game.load.audio('door-close-snd', 'media/close_door_1.mp3');
+            game.load.audio('door-open-snd', 'media/open_door_1.mp3');
+            game.load.audio('steps', 'media/steps.mp3');
+
+            /*
+             * Door left
+             */
+            game.load.image('door-close-l', 'media/door-close-l.png');
+            game.load.image('door-open-l', 'media/door-open-l.png');
+
+            /*
+             * Door right
+             */
+            game.load.image('door-close-r', 'media/door-close-r.png');
+            game.load.image('door-open-r', 'media/door-open-r.png');
+
+            /*
+             * TV
+             */
+            game.load.image('cam-btn', 'media/cam-btn.png');
+            game.load.video('tv-on',   'media/tv.mp4');
+            game.load.video('tv-none', 'media/tv1.mp4');
+            game.load.video('tv-cute', 'media/tv2.mp4');
+            game.load.video('tv-cate', 'media/tv3.mp4');
+            game.load.video('tv-koko', 'media/tv4.mp4');
+
+            /*
+             * Cat
+             */
+            game.load.audio('meow',  'media/cat.mp3');
+            game.load.image('cat-1', 'media/cat1.png');
+            game.load.image('cat-2', 'media/cat2.png');
+            game.load.image('cat-3', 'media/cat3.png');
+            game.load.image('cat-4', 'media/cat4.png');
+
+            /*
+             * Phone
+             */
+            game.load.audio('ring',  'media/ring.mp3');
+            game.load.image('phone-btn', 'media/phone-btn.png');
+
+            /*
+             * Music player
+             */
+            game.load.audio('music',  'media/music.mp3');
+            game.load.image('music-btn', 'media/music-btn.png');
+        }
+
+        function create() {
+            /*
+             * World size from 'media/scene.png'
+             */
+            var worldWidth  = 2650;
+            var worldHeight = 768;
+            game.world.setBounds(0, 0, worldWidth, worldHeight);
+            game.camera.y = 60;
+            game.camera.x = 900;
+
+            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
+            fullScreenKey.onDown.add(gofull, this);
+
+            scene.create();
+        }
+
+        function update() {
+            scene.update();
+        }
+
+        function render() {
+//             game.debug.imputInfo(game.camera, 500, 32);
+
+//             game.debug.pointer(game.input.activePointer, 100, 32);
+//             game.debug.cameraInfo(game.camera, 500, 32);
+//             game.debug.spriteInfo(card, 32, 32);
+
+//             game.debug.text('Click to toggle sprite / camera movement with cursors', 32, 550);
+
+        }
+
+        function gofull() {
+            if (game.scale.isFullScreen) {
+                game.scale.stopFullScreen();
+            } else {
+                game.scale.startFullScreen(false);
+            }
+        }
+
+    </script>
+
+
+</body>
+</html>
