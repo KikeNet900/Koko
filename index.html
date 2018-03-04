@@ -453,9 +453,8 @@
                 this.phoneSnd.stop();
             }
 
-            this.game.world.bringToTop(
-                this.scare[performer].addToWorld(this.game.camera.x, this.game.camera.y)
-            );
+            var scare = this.scare[performer].addToWorld(this.game.camera.x, this.game.camera.y);
+            this.game.world.bringToTop(scare);
             this.scare[performer].play(false);
             this.scare[performer].onComplete.add(function() {
                 window.location.href = window.location.href;
