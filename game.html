@@ -12,35 +12,36 @@
     </div>
     <div style="width: 100%; margin: auto; text-align: center;">
         Cierra las puertas y no hagas ruido. F11 pantalla completa.
+        <a href="https://github.com/KikeNet900/Koko" target="_blank"> Código fuente </a>
+        -
+        <a href="https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ" target="_blank"> Canal Youtube </a>
     </div>
-
-
 
     <script>
 
-    /*
-     * The MIT License (MIT)
-     *
-     * Copyright (c) 2018 KikeNet900 y Padre de Kike
-     * https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ
-     *
-     * Permission is hereby granted, free of charge, to any person obtaining a copy
-     * of this software and associated documentation files (the "Software"), to deal
-     * in the Software without restriction, including without limitation the rights
-     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-     * of the Software, and to permit persons to whom the Software is furnished to do
-     * so, subject to the following conditions:
-     *
-     * The above copyright notice and this permission notice shall be included in all
-     * copies or substantial portions of the Software.
-     *
-     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-     * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-     * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-     * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-     * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-     * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-     */
+        /*
+         * The MIT License (MIT)
+         *
+         * Copyright (c) 2018 KikeNet900 y Padre de Kike
+         * https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ
+         *
+         * Permission is hereby granted, free of charge, to any person obtaining a copy
+         * of this software and associated documentation files (the "Software"), to deal
+         * in the Software without restriction, including without limitation the rights
+         * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+         * of the Software, and to permit persons to whom the Software is furnished to do
+         * so, subject to the following conditions:
+         *
+         * The above copyright notice and this permission notice shall be included in all
+         * copies or substantial portions of the Software.
+         *
+         * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+         * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+         * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+         * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+         * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+         * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+         */
 
 
 
@@ -121,6 +122,7 @@
             this.areaR = this.game.camera.width - this.moveArea;
 
             this.isDead  = false;
+            this.isWin   = false;
             this.freeDoors      = ["1", "2"];
             this.freePerformers = ["cute", "cate", "koko"];
             this.game.add.sprite(0, 0, 'backdrop');
@@ -230,26 +232,28 @@
         }
 
         KokoScene.prototype.proceeding = function() {
-            this.game.time.events.loop(Phaser.Timer.SECOND * this.interval, function() {
+            this.proceedingLooop = this.game.time.events.loop(Phaser.Timer.SECOND * this.interval, function() {
                 this.incident();
-             }, this);
+            }, this);
         }
 
         KokoScene.prototype.incident = function() {
-            if (Math.floor(Math.random() * 100) < this.probabilityPerformer) {
-                this.emergePerformer();
-            }
-            if (Math.floor(Math.random() * 100) < this.probabilityPerformer) {
-                this.emergePerformer();
-            }
-            if (Math.floor(Math.random() * 100) < this.probabilityCat) {
-                this.emergeCat();
-            }
-            if (Math.floor(Math.random() * 100) < this.probabilityPhone) {
-                this.emergePhone();
-            }
-            if (Math.floor(Math.random() * 100) < this.probabilityMusic) {
-                this.emergeMusic();
+            if (!this.isDead && !this.isWin) {
+                if (Math.floor(Math.random() * 100) < this.probabilityPerformer) {
+                    this.emergePerformer();
+                }
+                if (Math.floor(Math.random() * 100) < this.probabilityPerformer) {
+                    this.emergePerformer();
+                }
+                if (Math.floor(Math.random() * 100) < this.probabilityCat) {
+                    this.emergeCat();
+                }
+                if (Math.floor(Math.random() * 100) < this.probabilityPhone) {
+                    this.emergePhone();
+                }
+                if (Math.floor(Math.random() * 100) < this.probabilityMusic) {
+                    this.emergeMusic();
+                }
             }
         }
 
@@ -391,42 +395,53 @@
 
             this.stepsSnd[door].play();
             this.stepsSnd[door].onStop.add(function() {
-                this.tv.setCam(door, performer);
-                this.door[door].open();
-                this.game.time.events.add(Phaser.Timer.SECOND * this.performerTime, function() {
-                    var performerInCam = this.tv.getCam(door);
-                    if (this.door[door].getOpen() && performer == performerInCam) {
-                        this.dead(performer);
-                    }
-                }, this);
+                if (!this.isDead && !this.isWin) {
+                    this.tv.setCam(door, performer);
+                    this.door[door].open();
+                    this.game.time.events.add(Phaser.Timer.SECOND * this.performerTime, function() {
+                        if (!this.isDead && !this.isWin) {
+                            var performerInCam = this.tv.getCam(door);
+                            if (this.door[door].getOpen() && performer == performerInCam) {
+                                this.dead(performer);
+                            }
+                        }
+                    }, this);
+                }
             }, this);
         }
 
         KokoScene.prototype.win = function(performer) {
+            this.isWin = true;
             this.tv.turnOff();
             if (this.cat) {
                 this.catSnd.stop();
+            }
+            if (this.musicSnd) {
+                this.musicSnd.stop();
+            }
+            if (this.phoneSnd) {
+                this.phoneSnd.stop();
             }
 
             this.winSnd = this.game.add.audio('win-snd');
             this.winImg = this.game.add.sprite(939, 60,  'win-img');
 
-                this.game.camera.y = 60;
-                this.game.camera.x = 939;
+            this.game.camera.y = 60;
+            this.game.camera.x = 939;
 
             this.game.world.bringToTop(this.winImg);
 
             this.winSnd.loop = false;
             this.winSnd.play();
 
-            this.game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+            this.game.time.events.add(Phaser.Timer.SECOND * 12, function() {
                 window.location.href = window.location.href;
             }, this);
 
         }
 
         KokoScene.prototype.dead = function(performer) {
-            if (this.isDead) {
+            if (this.isDead || this.isWin) {
                 return;
             }
             this.isDead = true;
@@ -434,9 +449,15 @@
             if (this.cat) {
                 this.catSnd.stop();
             }
-            this.game.world.bringToTop(
-                this.scare[performer].addToWorld(this.game.camera.x, this.game.camera.y)
-            );
+            if (this.musicSnd) {
+                this.musicSnd.stop();
+            }
+            if (this.phoneSnd) {
+                this.phoneSnd.stop();
+            }
+
+            var scare = this.scare[performer].addToWorld(this.game.camera.x, this.game.camera.y);
+            this.game.world.bringToTop(scare);
             this.scare[performer].play(false);
             this.scare[performer].onComplete.add(function() {
                 window.location.href = window.location.href;
@@ -472,7 +493,7 @@
         }
 
         KokoScene.prototype.update = function() {
-            if (!this.isDead) {
+            if (!this.isDead && !this.isWin) {
                 this.game.world.bringToTop(this.controls);
                 if (this.goUp) {
                     this.game.camera.y -= this.moveSpeed;
