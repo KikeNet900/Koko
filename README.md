@@ -9,6 +9,10 @@ El juego está en fase de desarrollo, así que tiene numeroso fallos, podéis ju
 
 https://kikenet900.github.io/Koko/
 
+## Video tutorial
+
+https://www.youtube.com/watch?v=fiwCgkfwJjs
+
 ## Authors
 
 Idea y guión KikeNet900 - [Canal Youtube KikeNet900](https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ)
