@@ -15,10 +15,10 @@
     </style>
 </head>
 <body style="color: #fff; background-color: #000" onload="">
-    <div id="koko-container" style="height: 100%; margin: auto;">
+<!--     <div id="koko-container" style="height: 100%; margin: auto;"> -->
         <div id="loading" style="height: 100%; margin: auto; text-align: center; margin-top: 20%; margin-bottom: 80%">Cargando...</div>
         <div id="koko-main" style="height: 100%; margin: auto;"></div>
-    </div>
+<!--     </div> -->
     <script>
 
         /*
@@ -56,10 +56,13 @@
             /*
              * Tiempo hasta que se hace de noche
              */
-            this.secToBegin = secToBegin || 15; // seconds
+            this.secToBegin = secToBegin || 20; // seconds
         }
 
         KokoScene.prototype.create = function() {
+            
+            this.isDead = false;
+            this.isWin  = false;
 
             /*
              * Fecuencia incidentes
@@ -123,8 +126,6 @@
             this.areaL = this.moveArea;
             this.areaR = this.game.camera.width - this.moveArea;
 
-            this.isDead  = false;
-            this.isWin   = false;
             this.freeDoors      = ["1", "2"];
             this.freePerformers = ["cute", "cate", "koko"];
             this.game.add.sprite(0, 0, 'backdrop');
@@ -429,10 +430,10 @@
             }
 
             this.winSnd = this.game.add.audio('win-snd');
-            this.winImg = this.game.add.sprite(939, 60,  'win-img');
+            this.winImg = this.game.add.sprite(919, 60,  'win-img');
 
             this.game.camera.y = 60;
-            this.game.camera.x = 939;
+            this.game.camera.x = 919;
 
             this.game.world.bringToTop(this.winImg);
 
@@ -460,14 +461,11 @@
             if (this.phoneSnd) {
                 this.phoneSnd.stop();
             }
-
             var scare = this.scare[performer].addToWorld(this.game.camera.x, this.game.camera.y);
             this.game.world.bringToTop(scare);
             this.scare[performer].play(false);
             this.scare[performer].onComplete.add(function() {
-                window.location.href = window.location.href;
-//                 this.game.time.events.removeAll();
-//                 this.game.state.restart();
+                window.location.href = window.location.href; 
             }, this);
         }
 
@@ -769,8 +767,6 @@
             game.load.image('full-btn', 'media/full-btn.png');
             game.load.image('win-img', 'media/6.png');
             game.load.image('fullscreen-btn', 'media/fullscreen.png');
-            game.load.image('h-btn', 'media/h.png');
-            game.load.image('v-btn', 'media/v.png');
             game.load.audio('win-snd', 'media/win.mp3');
             game.load.video('scare-koko', 'media/scare-koko.mp4');
             game.load.video('scare-cate', 'media/scare-cate.mp4');
@@ -836,16 +832,15 @@
             var worldHeight = 768;
             game.world.setBounds(0, 0, worldWidth, worldHeight);
             game.camera.y = 60;
-            game.camera.x = 939;
+            game.camera.x = 919;
 
             game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
-            fullScreenKey.onDown.add(gofull, this);
+            fullScreenKey.onDown.add(gofull);
 
             scene.create();
             setTimeout(function(){ document.getElementById('loading').style.display = 'none'; }, 1000);
-            gofull();
         }
 
         function update() {
