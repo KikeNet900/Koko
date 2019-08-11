@@ -752,7 +752,7 @@
         /*
          * Camera size
          */
-        var cameraWidth  = 1024;
+        var cameraWidth  = 960;
         var cameraHeight = 600;
 
         var game  = new Phaser.Game(cameraWidth, cameraHeight, Phaser.CANVAS, divContainer, { preload: preload, create: create, update: update, render: render });
@@ -846,7 +846,7 @@
             fullScreenKey.onDown.add(gofull, this);
 
             scene.create();
-            setTimeout(function(){ document.getElementById('loading').style.display = 'none'; }, 1500);
+            setTimeout(function(){ document.getElementById('loading').style.display = 'none'; }, 1000);
         }
 
         function update() {
