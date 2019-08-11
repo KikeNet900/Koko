@@ -16,7 +16,7 @@
 </head>
 <body style="color: #fff; background-color: #000" onload="">
     <div id="koko-container" style="width: 100%; height: 100%; margin: auto;">
-        <div id="loading" style="text-align: center; margin-top: 20%">Cargando...</div>
+        <div id="loading" style="text-align: center; margin-top: 20%; margin-bottom: 80%">Cargando...</div>
         <div id="koko-main" style="height: 100%; margin: auto;"></div>
     </div>
     <script>
@@ -834,7 +834,7 @@
              */
             var worldWidth  = 2650;
             var worldHeight = 768;
-            document.getElementById('loading').style.display = 'none';
+            game.world.setBounds(0, 0, worldWidth, worldHeight);
             game.camera.y = 60;
             game.camera.x = 939;
 
@@ -842,11 +842,11 @@
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 //             game.scale.pageAlignHorizontally = true;
 //             game.scale.pageAlignVertically = true;
-//             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
-//             fullScreenKey.onDown.add(gofull, this);
+            fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
+            fullScreenKey.onDown.add(gofull, this);
 
             scene.create();
-            document.getElementById('loading').style.display = 'none';
+            setTimeout(function(){ document.getElementById('loading').style.display = 'none'; }, 1500);
         }
 
         function update() {
