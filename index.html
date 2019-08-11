@@ -4,6 +4,11 @@
     <title>Una noche con Koko</title>
     <meta charset="utf-8">
     <script src="phaser.min.js"></script>
+    <link rel="manifest" href="/koko/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Koko">
+    <meta name="application-name" content="Koko">
 </head>
 <body style="color: #fff; background-color: #000" onload="">
 
@@ -11,7 +16,7 @@
         <div id="koko-main"></div>
     </div>
     <div style="width: 100%; margin: auto; text-align: center;">
-        Cierra las puertas y no hagas ruido. F11 pantalla completa.
+        Cierra las puertas y no hagas ruido. <a href="javascript:gofull();">F11 pantalla completa</a>.
         <a href="https://github.com/KikeNet900/Koko" target="_blank"> Código fuente </a>
         -
         <a href="https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ" target="_blank"> Canal Youtube </a>
@@ -167,6 +172,9 @@
                 this.game.camera.x = 939;
             }, this);
             this.ctrlFull.fixedToCamera = true;
+            
+            this.fullscreenBtn = this.game.add.button(905, 545, 'fullscreen-btn', gofull);
+            this.fullscreenBtn.fixedToCamera = true;
 
             this.stepsSnd = [];
             this.stepsSnd[1] = this.game.add.audio('steps');
@@ -763,6 +771,7 @@
             game.load.image('controls', 'media/controls.png');
             game.load.image('full-btn', 'media/full-btn.png');
             game.load.image('win-img', 'media/6.png');
+            game.load.image('fullscreen-btn', 'media/fullscreen.png');
             game.load.audio('win-snd', 'media/win.mp3');
             game.load.video('scare-koko', 'media/scare-koko.mp4');
             game.load.video('scare-cate', 'media/scare-cate.mp4');
@@ -861,7 +870,18 @@
         }
 
     </script>
-
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/koko/service-worker.js').then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }).catch(function(err) {
+            // registration failed :(
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        }
+    </script>
 
 </body>
 </html>
