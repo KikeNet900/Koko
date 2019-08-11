@@ -750,7 +750,7 @@
         /*
          * Camera size
          */
-        var cameraWidth  = 960;
+        var cameraWidth  = 1024;
         var cameraHeight = 600;
 
         var game  = new Phaser.Game(cameraWidth, cameraHeight, Phaser.CANVAS, divContainer, { preload: preload, create: create, update: update, render: render });
@@ -834,20 +834,13 @@
             game.camera.y = 60;
             game.camera.x = 939;
 
+            game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            game.scale.pageAlignHorizontally = true;
+            game.scale.pageAlignVertically = true;
             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
             fullScreenKey.onDown.add(gofull, this);
 
-            
-game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-game.scale.pageAlignHorizontally = true;
-game.scale.pageAlignVertically = true;
-// game.scale.forceOrientation(true, false);
-// game.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
-// game.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);
-            
-            
             scene.create();
 //             resize();
         }
