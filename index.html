@@ -170,7 +170,7 @@
             }, this);
             this.ctrlFull.fixedToCamera = true;
             
-            this.fullscreenBtn = this.game.add.button(960, 535, 'fullscreen-btn', gofull, this);
+            this.fullscreenBtn = this.game.add.button(960, 535, 'fullscreen-btn', gofull);
             this.fullscreenBtn.fixedToCamera = true;
 
             this.stepsSnd = [];
@@ -845,6 +845,7 @@
 
             scene.create();
             setTimeout(function(){ document.getElementById('loading').style.display = 'none'; }, 1000);
+            gofull();
         }
 
         function update() {
