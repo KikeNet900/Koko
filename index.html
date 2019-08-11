@@ -9,13 +9,15 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Koko">
     <meta name="application-name" content="Koko">
+    <style>
+        html, body { height: 100%; margin: auto; }
+        body { margin: 0; padding: 0; }
+    </style>
 </head>
 <body style="color: #fff; background-color: #000" onload="">
-    <div id="koko-container" style="margin: auto;">
-        <div id="koko-main"></div>
+    <div id="koko-container" style="height: 100%; margin: auto;">
+        <div  style="height: 100%; margin: auto;" id="koko-main"></div>
     </div>
-
-
     <script>
 
         /*
@@ -163,12 +165,12 @@
 
             this.ctrlFull = this.game.add.button(80, 495, 'full-btn', function(){
                 this.game.camera.y = 60;
-                this.game.camera.x = 939;
+                this.game.camera.x = 919;
             }, this);
             this.ctrlFull.fixedToCamera = true;
             
 //             this.fullscreenBtn = this.game.add.button(905, 545, 'fullscreen-btn', gofull);
-            this.fullscreenBtn = this.game.add.button(890, 520, 'fullscreen-btn', gofull);
+            this.fullscreenBtn = this.game.add.button(960, 535, 'fullscreen-btn', gofull);
             this.fullscreenBtn.fixedToCamera = true;
 
             this.stepsSnd = [];
@@ -836,13 +838,12 @@
 
             game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-            game.scale.pageAlignHorizontally = true;
-            game.scale.pageAlignVertically = true;
+//             game.scale.pageAlignHorizontally = true;
+//             game.scale.pageAlignVertically = true;
             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
             fullScreenKey.onDown.add(gofull, this);
 
             scene.create();
-//             resize();
         }
 
         function update() {
@@ -881,27 +882,7 @@
             });
         }
     </script>
-    <script>
-//         function resize() {
-//             var w = window.innerWidth;
-//             var h = window.innerHeight;
-//             var scale = Math.min(w / cameraWidth, h / cameraHeight);
-//             
-//             game.canvas.setAttribute('style',
-//                 ' -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1);' +
-//                 ' -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); transform: scale(' + scale + ');' +
-//                 ' transform-origin: top left;'
-//             );
-//             
-//             width = w / scale;
-//             height = h / scale;
-//             game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;﻿
-//             game.scene.scenes.forEach(function (scene) {
-//                 scene.cameras.main.setViewport(0, 0, width, height);
-//             });
-//         }
-//         window.addEventListener('resize', resize);
-    </script>
+
 
 </body>
 </html>
