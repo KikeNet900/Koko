@@ -840,6 +840,8 @@
             game.camera.x = 939;
 
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+game.scale.pageAlignHorizontally = true;
+game.scale.pageAlignVertically = true;
             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
             fullScreenKey.onDown.add(gofull, this);
 
@@ -880,6 +882,28 @@
             // registration failed :(
                 console.log('ServiceWorker registration failed: ', err);
             });
+        }
+    </script>
+    <script>
+        function resize() {
+            const canvas = document.querySelector("canvas");
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const wratio = width / height;
+            const ratio = Number(gameConfig.width) / Number(gameConfig.height);
+            if (wratio < ratio) {
+                canvas.style.width = width + "px";
+                canvas.style.height = (width / ratio) + "px";
+            } else {
+                canvas.style.width = (height * ratio) + "px";
+                canvas.style.height = height + "px";
+            }
+        }
+
+        window.onload = function(){
+            // setup your game here
+            resize();
+            window.addEventListener("resize", resize, false);
         }
     </script>
 
