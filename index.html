@@ -132,7 +132,7 @@
             this.controls.fixedToCamera = true;
 
             this.goUp = false;
-            this.ctrlUp = this.game.add.button(70, 441, 'control-btn');
+            this.ctrlUp = this.game.add.button(67, 430, 'control-btn');
             this.ctrlUp.fixedToCamera = true;
 //             this.ctrlUp.events.onInputOver.add(function(){this.goUp=true;}, this);
             this.ctrlUp.events.onInputOut.add(function(){this.goUp=false;}, this);
@@ -140,7 +140,7 @@
             this.ctrlUp.events.onInputUp.add(function(){this.goUp=false;}, this);
 
             this.goRight = false;
-            this.ctrlRight = this.game.add.button(117, 486, 'control-btn');
+            this.ctrlRight = this.game.add.button(121, 485, 'control-btn');
             this.ctrlRight.fixedToCamera = true;
 //             this.ctrlRight.events.onInputOver.add(function(){this.goRight=true;}, this);
             this.ctrlRight.events.onInputOut.add(function(){this.goRight=false;}, this);
@@ -148,7 +148,7 @@
             this.ctrlRight.events.onInputUp.add(function(){this.goRight=false;}, this);
 
             this.goLeft = false;
-            this.ctrlLeft = this.game.add.button(23, 486, 'control-btn');
+            this.ctrlLeft = this.game.add.button(14, 485, 'control-btn');
             this.ctrlLeft.fixedToCamera = true;
 //             this.ctrlLeft.events.onInputOver.add(function(){this.goLeft=true;}, this);
             this.ctrlLeft.events.onInputOut.add(function(){this.goLeft=false;}, this);
@@ -156,14 +156,14 @@
             this.ctrlLeft.events.onInputUp.add(function(){this.goLeft=false;}, this);
 
             this.goDown = false;
-            this.ctrlDown = this.game.add.button(70, 532, 'control-btn');
+            this.ctrlDown = this.game.add.button(67, 540, 'control-btn');
             this.ctrlDown.fixedToCamera = true;
 //             this.ctrlDown.events.onInputOver.add(function(){this.goDown=true;}, this);
             this.ctrlDown.events.onInputOut.add(function(){this.goDown=false;}, this);
             this.ctrlDown.events.onInputDown.add(function(){this.goDown=true;}, this);
             this.ctrlDown.events.onInputUp.add(function(){this.goDown=false;}, this);
 
-            this.ctrlFull = this.game.add.button(80, 495, 'full-btn', function(){
+            this.ctrlFull = this.game.add.button(69, 486, 'full-btn', function(){
                 this.game.camera.y = 60;
                 this.game.camera.x = 919;
             }, this);
@@ -836,7 +836,7 @@
             game.camera.y = 60;
             game.camera.x = 939;
 
-//             game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 //             game.scale.pageAlignHorizontally = true;
 //             game.scale.pageAlignVertically = true;
