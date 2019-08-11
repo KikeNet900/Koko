@@ -5,22 +5,16 @@
     <meta charset="utf-8">
     <script src="phaser.min.js"></script>
     <link rel="manifest" href="/Koko/manifest.json">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1,  width=device-width" />
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Koko">
     <meta name="application-name" content="Koko">
 </head>
 <body style="color: #fff; background-color: #000" onload="">
+    <div id="koko-container" style="margin: auto;">
+        <div style="width: 100%;" id="koko-main"></div>
+    </div>
 
-    <div id="koko-container" style="width: 960px; height: 600px; margin: auto;">
-        <div id="koko-main"></div>
-    </div>
-    <div style="width: 100%; margin: auto; text-align: center;">
-        Cierra las puertas y no hagas ruido. <a href="javascript:gofull();">F11 pantalla completa</a>.
-        <a href="https://github.com/KikeNet900/Koko" target="_blank"> Código fuente </a>
-        -
-        <a href="https://www.youtube.com/channel/UCftKkIpHVOaERHjkq8qnAdQ" target="_blank"> Canal Youtube </a>
-    </div>
 
     <script>
 
@@ -840,12 +834,21 @@
             game.camera.x = 939;
 
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-game.scale.pageAlignHorizontally = true;
-game.scale.pageAlignVertically = true;
             fullScreenKey = game.input.keyboard.addKey(Phaser.Keyboard.F11);
             fullScreenKey.onDown.add(gofull, this);
 
+            
+game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+game.scale.pageAlignHorizontally = true;
+game.scale.pageAlignVertically = true;
+// game.scale.forceOrientation(true, false);
+// game.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
+// game.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);
+            
+            
             scene.create();
+//             resize();
         }
 
         function update() {
@@ -885,26 +888,25 @@ game.scale.pageAlignVertically = true;
         }
     </script>
     <script>
-        function resize() {
-            const canvas = document.querySelector("canvas");
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            const wratio = width / height;
-            const ratio = Number(gameConfig.width) / Number(gameConfig.height);
-            if (wratio < ratio) {
-                canvas.style.width = width + "px";
-                canvas.style.height = (width / ratio) + "px";
-            } else {
-                canvas.style.width = (height * ratio) + "px";
-                canvas.style.height = height + "px";
-            }
-        }
-
-        window.onload = function(){
-            // setup your game here
-            resize();
-            window.addEventListener("resize", resize, false);
-        }
+//         function resize() {
+//             var w = window.innerWidth;
+//             var h = window.innerHeight;
+//             var scale = Math.min(w / cameraWidth, h / cameraHeight);
+//             
+//             game.canvas.setAttribute('style',
+//                 ' -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1);' +
+//                 ' -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); transform: scale(' + scale + ');' +
+//                 ' transform-origin: top left;'
+//             );
+//             
+//             width = w / scale;
+//             height = h / scale;
+//             game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;﻿
+//             game.scene.scenes.forEach(function (scene) {
+//                 scene.cameras.main.setViewport(0, 0, width, height);
+//             });
+//         }
+//         window.addEventListener('resize', resize);
     </script>
 
 </body>
