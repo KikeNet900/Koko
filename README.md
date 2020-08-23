@@ -1,7 +1,7 @@
 
 # 5 noches con Koko
 
-Cinco noches con Koko es un juego inspirado en Five nights at Freddy's para el canal de youtube KikeNet900
+Cinco noches con Koko es un juego inspirado en Five nights at Freddy's para el canal de youtube KikeNet900 ( https://kikenet900.ltn.net/ )
 
 ## El juego
 
